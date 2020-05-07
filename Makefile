@@ -38,8 +38,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 APP_TITLE   := Atmosphere-Updater
-APP_AUTHOR  := TotalJustice
-APP_VERSION := 0.5.1
+APP_AUTHOR  := eXhumer
+APP_VERSION := 0.6.0
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build

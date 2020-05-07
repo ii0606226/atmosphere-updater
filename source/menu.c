@@ -5,7 +5,7 @@
 #include "touch.h"
 #include "util.h"
 
-#define APP_VERSION "Atmosphere Updater: 0.5.1"
+#define APP_VERSION "Atmosphere Updater: 0.6.0"
 
 void refreshScreen(char loaded)
 {
@@ -38,19 +38,19 @@ void printOptionList(int cursor)
 {
     refreshScreen(/*loaded=*/1);
 
-    char *option_list[]      = {    "Full Atmosphere update (recommended)", \
-                                    "Update Atmosphere (ignoring .ini files)", \
-                                    "Update Hekate (for hekate / kosmos users)", \
+    char *option_list[]      = {    "Update Atmosphere", \
+                                    "Update Hekate", \
+                                    "Update Sigpatches", \
                                     "Update app", \
                                     "Reboot (reboot to payload)" };
 
     char *description_list[] = {    "Update everything for Atmosphere", \
-                                    "Update Atmosphere ignoring .ini files (if they exist)", \
-                                    "Update hekate with option to also update Atmosphere", \
+                                    "Update everything for Hekate", \
+                                    "Update to latest sigpatches", \
                                     "Update app and removes old version", \
                                     "Reboots switch (recommended after updating)" };
 
-    SDL_Texture *textureArray[] = { ams_icon, ams_plus_icon, hekate_icon, app_icon, reboot_icon };
+    SDL_Texture *textureArray[] = { ams_icon, hekate_icon, patch_icon, app_icon, reboot_icon };
 
     for (int i=0, nl=0; i < (CURSOR_LIST_MAX+1); i++, nl+=NEWLINE)
     {
@@ -79,9 +79,9 @@ void popUpBox(TTF_Font *font, int x, int y, SDL_Colour colour, char *text)
     drawText(font, x, y, colour, text);
 }
 
-int yesNoBox(int mode, int x, int y, char *question)
+int yesNoBox(int cursor, int x, int y, char *question)
 {
-    printOptionList(mode);
+    printOptionList(cursor);
     popUpBox(fntMedium, x, y, SDL_GetColour(white), question);
     // highlight box.
     drawShape(SDL_GetColour(faint_blue), 380, 410, 175, 65);

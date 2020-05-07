@@ -156,53 +156,51 @@ int parseSearch(char *parse_string, char *filter, char* new_string)
     return 1;
 }
 
-int update_ams_hekate(char *url, char *output, int mode)
+void update_ams()
 {
-    if (mode == UP_HEKATE)
-    {
-        // ask if user wants to install atmosphere as well.
-        int res = yesNoBox(mode, 390, 250, "Update AMS and hekate?");
-
-        if (res == YES)
-        {
-            // ask if user wants to overwite the atmosphere ini files.
-            res = yesNoBox(mode, 355, 250, "Overwite Atmosphere ini files?");
-
-            if (res == YES)
-            {
-                if (!update_ams_hekate(AMS_URL, AMS_OUTPUT, UP_AMS))
-                    rename("/atmosphere/reboot_payload.bin", "/bootloader/payloads/fusee-primary.bin");
-            }
-
-            else
-            {
-                if (!update_ams_hekate(AMS_URL, AMS_OUTPUT, UP_AMS_NOINI))
-                    rename("/atmosphere/reboot_payload.bin", "/bootloader/payloads/fusee-primary.bin");
-            }
-        }
-    }
-
-    if (!downloadFile(url, TEMP_FILE, ON))
+    if (!downloadFile(AMS_URL, TEMP_FILE, ON))
     {
         char new_url[MAX_STRLEN];
         if (!parseSearch(TEMP_FILE, FILTER_STRING, new_url))
         {
-            if (!downloadFile(new_url, output, OFF))
+            if (!downloadFile(new_url, AMS_OUTPUT, OFF))
             {
-                unzip(output, mode);
-
-                // check if an update.bin is present, remove if so.
-                if (mode == UP_HEKATE)
-                {
-                    copyFile("/atmosphere/reboot_payload.bin", "/bootloader/update.bin");
-                }
-                return 0;
+                unzip(AMS_OUTPUT, UP_AMS);
+                remove(AMS_OUTPUT);
             }
-            return 1;
         }
-        return 1;
     }
-    return 1;
+
+    // ask if user wants to update sigpatches as well.
+    if (yesNoBox(0, 390, 250, "Update sigpatches as well?") == YES)
+    {
+        update_sigpatches(UP_AMS);
+    }
+}
+
+void update_hekate()
+{
+    if (!downloadFile(HEKATE_URL, TEMP_FILE, ON))
+    {
+        char new_url[MAX_STRLEN];
+        if (!parseSearch(TEMP_FILE, FILTER_STRING, new_url))
+        {
+            if (!downloadFile(new_url, HEKATE_OUTPUT, OFF))
+            {
+                unzip(HEKATE_OUTPUT, UP_HEKATE);
+                remove(HEKATE_OUTPUT);
+            }
+        }
+    }
+}
+
+void update_sigpatches(int cursor)
+{
+    if (!downloadFile(PATCH_URL, PATCH_OUTPUT, OFF))
+    {
+        unzip(PATCH_OUTPUT, cursor);
+        remove(PATCH_OUTPUT);
+    }
 }
 
 void update_app()

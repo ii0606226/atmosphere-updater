@@ -4,13 +4,14 @@
 #include <dirent.h>
 #include <switch.h>
 
+#include "util.h"
 #include "unzip.h"
 #include "menu.h"
 
 #define WRITEBUFFERSIZE 500000 // 500KB
 #define MAXFILENAME     256
 
-int unzip(const char *output, int mode)
+int unzip(const char *output, int cursor)
 {
     unzFile zfile = unzOpen(output);
     unz_global_info gi;
@@ -18,8 +19,8 @@ int unzip(const char *output, int mode)
 
     for (int i = 0; i < gi.number_entry; i++)
     {
-        printOptionList(mode);
-        popUpBox(fntSmall, 350, 250, SDL_GetColour(white), "Unziping...");
+        printOptionList(cursor);
+        popUpBox(fntSmall, 350, 250, SDL_GetColour(white), "Unzipping...");
 
         char filename_inzip[MAXFILENAME];
         unz_file_info file_info;
@@ -27,14 +28,17 @@ int unzip(const char *output, int mode)
         unzOpenCurrentFile(zfile);
         unzGetCurrentFileInfo(zfile, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
 
-        if (mode == UP_AMS_NOINI && strstr(filename_inzip, ".ini"))
+        // prevents /config/BCT.ini from be overwritten
+        if (strstr(filename_inzip, "/config/BCT.ini"))
         {
-            // check if file exists, if not, create one anyway
             FILE *f = fopen(filename_inzip, "r");
             if (f)
             {
-                fclose(f);
-                goto jump_to_end;
+                if(yesNoBox(cursor, 390, 250, "Overwrite BCT.ini?") == NO)
+                {
+                    fclose(f);
+                    goto jump_to_end;
+                }
             }
             fclose(f);
         }
@@ -57,9 +61,7 @@ int unzip(const char *output, int mode)
             const char *write_filename = filename_inzip;
             void *buf = malloc(WRITEBUFFERSIZE);
 
-            FILE *outfile;
-            if (mode == UP_HEKATE && strstr(filename_inzip, ".bin")) outfile = fopen("/atmosphere/reboot_payload.bin", "wb");
-            else outfile = fopen(write_filename, "wb");
+            FILE *outfile = fopen(write_filename, "wb");
 
             drawText(fntSmall, 350, 350, SDL_GetColour(white), write_filename);
 

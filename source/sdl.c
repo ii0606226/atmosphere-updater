@@ -129,9 +129,9 @@ void loadTextures()
     imageLoad(&background,      "romfs:/ams_background.png");
     imageLoad(&app_icon,        "romfs:/app_icon.png");
     imageLoad(&ams_icon,        "romfs:/ams_icon.png");
-    imageLoad(&ams_plus_icon,   "romfs:/ams_plus_icon.png");
-    imageLoad(&reboot_icon,     "romfs:/reboot_icon.png");
     imageLoad(&hekate_icon,     "romfs:/hekate_icon.png");
+    imageLoad(&patch_icon,      "romfs:/patch_icon.png");
+    imageLoad(&reboot_icon,     "romfs:/reboot_icon.png");
     imageLoad(&error_icon,      "romfs:/error_icon.png");
 }
 
@@ -146,9 +146,9 @@ void destroyTextures()
     SDL_DestroyTexture(background);
     SDL_DestroyTexture(app_icon);
     SDL_DestroyTexture(ams_icon);
-    SDL_DestroyTexture(ams_plus_icon);
-    SDL_DestroyTexture(reboot_icon);
     SDL_DestroyTexture(hekate_icon);
+    SDL_DestroyTexture(patch_icon);
+    SDL_DestroyTexture(reboot_icon);
     SDL_DestroyTexture(error_icon);
 }
 
