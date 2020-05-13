@@ -47,7 +47,7 @@ __**The app currently has 4 main options.**__
 Install the devkitpro tool chain from [here](https://devkitpro.org/wiki/Getting_Started).
 
  Using pacman (installed with devkitpro) install the following libraries:
-* switch-curl
+* [switch-ex-curl](https://www.github.com/eXhumer/switch-ex-curl/)
 * switch-freetype
 * switch-sdl2
 * switch-sdl2_gfx
