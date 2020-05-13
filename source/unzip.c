@@ -20,7 +20,7 @@ int unzip(const char *output, int cursor)
     for (int i = 0; i < gi.number_entry; i++)
     {
         printOptionList(cursor);
-        popUpBox(fntSmall, 350, 250, SDL_GetColour(white), "Unzipping...");
+        popUpBox(appFonts.fntSmall, 350, 250, SDL_GetColour(white), "Unzipping...");
 
         char filename_inzip[MAXFILENAME];
         unz_file_info file_info;
@@ -51,7 +51,7 @@ int unzip(const char *output, int cursor)
             if (dir) closedir(dir);
             else
             {
-                drawText(fntSmall, 350, 350, SDL_GetColour(white), filename_inzip);
+                drawText(appFonts.fntSmall, 350, 350, SDL_GetColour(white), filename_inzip);
                 mkdir(filename_inzip, 0777);
             }
         }
@@ -63,7 +63,7 @@ int unzip(const char *output, int cursor)
 
             FILE *outfile = fopen(write_filename, "wb");
 
-            drawText(fntSmall, 350, 350, SDL_GetColour(white), write_filename);
+            drawText(appFonts.fntSmall, 350, 350, SDL_GetColour(white), write_filename);
 
             for (int j = unzReadCurrentFile(zfile, buf, WRITEBUFFERSIZE); j > 0; j = unzReadCurrentFile(zfile, buf, WRITEBUFFERSIZE))
                 fwrite(buf, 1, j, outfile);

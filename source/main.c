@@ -12,6 +12,9 @@
 
 //#define DEBUG                                              // enable for nxlink debug
 
+AppTextures appTextures;
+AppFonts appFonts;
+
 int appInit()
 {
     Result rc;
@@ -30,7 +33,7 @@ int appInit()
     if (R_FAILED(rc = splInitialize()))                     // for atmosphere version
         printf("splInitialize() failed: 0x%x.\n\n", rc);
 
-    if (R_FAILED(rc = plInitialize()))    // for shared fonts.
+    if (R_FAILED(rc = plInitialize(PlServiceType_User)))    // for shared fonts.
         printf("plInitialize() failed: 0x%x.\n\n", rc);
 
     if (R_FAILED(rc = romfsInit()))                         // load textures from app.

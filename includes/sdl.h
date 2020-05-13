@@ -53,8 +53,18 @@
 #define BUTTON_L3           0xE104
 #define BUTTON_R3           0xE105
 
-TTF_Font *fntSmall, *fntMedium, *fntLarge, *fntButton, *fntButtonBig;
-SDL_Texture *background, *app_icon, *ams_icon, *hekate_icon, *patch_icon, *reboot_icon, *error_icon;
+typedef struct
+{
+    TTF_Font *fntSmall, *fntMedium, *fntLarge, *fntButton, *fntButtonBig;
+} AppFonts;
+
+typedef struct
+{
+    SDL_Texture *background, *app_icon, *ams_icon, *hekate_icon, *patch_icon, *reboot_icon, *error_icon;
+} AppTextures;
+
+extern AppFonts appFonts;
+extern AppTextures appTextures;
 
 
 SDL_Colour SDL_GetColour(int colour_option);                                        //pass the name of colour, returns the colour

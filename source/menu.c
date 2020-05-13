@@ -5,32 +5,32 @@
 #include "touch.h"
 #include "util.h"
 
-#define APP_VERSION "Atmosphere Updater: 0.6.0"
+#define APP_VERSION "Atmosphere Updater: 0.6.1"
 
 void refreshScreen(char loaded)
 {
     clearRenderer();
 
     // app version.
-    drawText(fntMedium, 40, 40, SDL_GetColour(white), APP_VERSION);
+    drawText(appFonts.fntMedium, 40, 40, SDL_GetColour(white), APP_VERSION);
 
     // system version.
-    drawText(fntSmall, 25, 150, SDL_GetColour(white), getSysVersion());
+    drawText(appFonts.fntSmall, 25, 150, SDL_GetColour(white), getSysVersion());
 
     // atmosphere version.
-    drawText(fntSmall, 25, 230, SDL_GetColour(white), getAmsVersion());
+    drawText(appFonts.fntSmall, 25, 230, SDL_GetColour(white), getAmsVersion());
 
     if (loaded)
     {
       // write the latest version number, if an update is available
-      drawText(fntSmall, 25, 260, SDL_GetColour(white), getLatestAtmosphereVersion());
+      drawText(appFonts.fntSmall, 25, 260, SDL_GetColour(white), getLatestAtmosphereVersion());
 
       //drawText(fntMedium, 120, 225, SDL_GetColour(white), "Menu Here"); // menu options
-      drawButton(fntButton, BUTTON_A, 970, 672, SDL_GetColour(white));
-      drawText(fntSmall, 1010, 675, SDL_GetColour(white), "Select");
+      drawButton(appFonts.fntButton, BUTTON_A, 970, 672, SDL_GetColour(white));
+      drawText(appFonts.fntSmall, 1010, 675, SDL_GetColour(white), "Select");
 
-      drawButton(fntButton, BUTTON_PLUS, 1145, 672, SDL_GetColour(white));
-      drawText(fntSmall, 1185, 675, SDL_GetColour(white), "Exit");
+      drawButton(appFonts.fntButton, BUTTON_PLUS, 1145, 672, SDL_GetColour(white));
+      drawText(appFonts.fntSmall, 1185, 675, SDL_GetColour(white), "Exit");
     }
 }
 
@@ -50,11 +50,11 @@ void printOptionList(int cursor)
                                     "Update app and removes old version", \
                                     "Reboots switch (recommended after updating)" };
 
-    SDL_Texture *textureArray[] = { ams_icon, hekate_icon, patch_icon, app_icon, reboot_icon };
+    SDL_Texture *textureArray[] = { appTextures.ams_icon, appTextures.hekate_icon, appTextures.patch_icon, appTextures.app_icon, appTextures.reboot_icon };
 
     for (int i=0, nl=0; i < (CURSOR_LIST_MAX+1); i++, nl+=NEWLINE)
     {
-        if (cursor != i) drawText(fntSmall, 550, FIRST_LINE+nl, SDL_GetColour(white), option_list[i]);
+        if (cursor != i) drawText(appFonts.fntSmall, 550, FIRST_LINE+nl, SDL_GetColour(white), option_list[i]);
         else
         {
             // icon for the option selected.
@@ -62,9 +62,9 @@ void printOptionList(int cursor)
             // highlight box.
             drawShape(SDL_GetColour(dark_blue), 530, (FIRST_LINE + nl - HIGHLIGHT_BOX_MIN), 700, HIGHLIGHT_BOX_MAX);
             // option text.
-            drawText(fntSmall, 550, FIRST_LINE+nl, SDL_GetColour(jordy_blue), option_list[i]);
+            drawText(appFonts.fntSmall, 550, FIRST_LINE+nl, SDL_GetColour(jordy_blue), option_list[i]);
             // description.
-            drawText(fntSmall, 25, 675, SDL_GetColour(white), description_list[i]);
+            drawText(appFonts.fntSmall, 25, 675, SDL_GetColour(white), description_list[i]);
         }
     }
 }
@@ -82,15 +82,15 @@ void popUpBox(TTF_Font *font, int x, int y, SDL_Colour colour, char *text)
 int yesNoBox(int cursor, int x, int y, char *question)
 {
     printOptionList(cursor);
-    popUpBox(fntMedium, x, y, SDL_GetColour(white), question);
+    popUpBox(appFonts.fntMedium, x, y, SDL_GetColour(white), question);
     // highlight box.
     drawShape(SDL_GetColour(faint_blue), 380, 410, 175, 65);
     drawShape(SDL_GetColour(faint_blue), 700, 410, 190, 65);
     // option text.
-    drawButton(fntButtonBig, BUTTON_B, 410, 425, SDL_GetColour(white));
-    drawText(fntMedium, 455, 425, SDL_GetColour(white), "No");
-    drawButton(fntButtonBig, BUTTON_A, 725, 425, SDL_GetColour(white));
-    drawText(fntMedium, 770, 425, SDL_GetColour(white), "Yes");
+    drawButton(appFonts.fntButtonBig, BUTTON_B, 410, 425, SDL_GetColour(white));
+    drawText(appFonts.fntMedium, 455, 425, SDL_GetColour(white), "No");
+    drawButton(appFonts.fntButtonBig, BUTTON_A, 725, 425, SDL_GetColour(white));
+    drawText(appFonts.fntMedium, 770, 425, SDL_GetColour(white), "Yes");
 
     updateRenderer();
 
@@ -125,8 +125,8 @@ int yesNoBox(int cursor, int x, int y, char *question)
 
 void errorBox(int x, int y, char *errorText)
 {
-    popUpBox(fntMedium, x, y, SDL_GetColour(white), errorText);
-    drawImageScale(error_icon, 570, 340, 128, 128);
+    popUpBox(appFonts.fntMedium, x, y, SDL_GetColour(white), errorText);
+    drawImageScale(appTextures.error_icon, 570, 340, 128, 128);
     updateRenderer();
 
     sleep(3);

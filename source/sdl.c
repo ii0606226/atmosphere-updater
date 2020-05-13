@@ -4,7 +4,7 @@
 /* I would greatly appreaciate it :) */
 
 
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <switch.h>
 
 #include "sdl.h"
@@ -44,7 +44,7 @@ SDL_Window *SDL_GetWindow(void)
 void clearRenderer()
 {
     SDL_RenderClear(SDL_GetRenderer(SDL_GetWindow()));
-    SDL_RenderCopy(main_renderer, background, NULL, NULL);
+    SDL_RenderCopy(main_renderer, appTextures.background, NULL, NULL);
 }
 
 void updateRenderer()
@@ -117,39 +117,39 @@ void loadFonts()
     plGetSharedFontByType(&font, PlSharedFontType_Standard);
     plGetSharedFontByType(&button_data, PlSharedFontType_NintendoExt);
 
-    fntSmall        = TTF_OpenFontRW(SDL_RWFromMem(font.address, font.size), 1, 28);
-    fntMedium       = TTF_OpenFontRW(SDL_RWFromMem(font.address, font.size), 1, 36);
-    fntLarge        = TTF_OpenFontRW(SDL_RWFromMem(font.address, font.size), 1, 48);
-    fntButton       = TTF_OpenFontRW(SDL_RWFromMem(button_data.address, button_data.size), 1, 30);
-    fntButtonBig    = TTF_OpenFontRW(SDL_RWFromMem(button_data.address, button_data.size), 1, 36);
+    appFonts.fntSmall        = TTF_OpenFontRW(SDL_RWFromMem(font.address, font.size), 1, 28);
+    appFonts.fntMedium       = TTF_OpenFontRW(SDL_RWFromMem(font.address, font.size), 1, 36);
+    appFonts.fntLarge        = TTF_OpenFontRW(SDL_RWFromMem(font.address, font.size), 1, 48);
+    appFonts.fntButton       = TTF_OpenFontRW(SDL_RWFromMem(button_data.address, button_data.size), 1, 30);
+    appFonts.fntButtonBig    = TTF_OpenFontRW(SDL_RWFromMem(button_data.address, button_data.size), 1, 36);
 }
 
 void loadTextures()
 {
-    imageLoad(&background,      "romfs:/ams_background.png");
-    imageLoad(&app_icon,        "romfs:/app_icon.png");
-    imageLoad(&ams_icon,        "romfs:/ams_icon.png");
-    imageLoad(&hekate_icon,     "romfs:/hekate_icon.png");
-    imageLoad(&patch_icon,      "romfs:/patch_icon.png");
-    imageLoad(&reboot_icon,     "romfs:/reboot_icon.png");
-    imageLoad(&error_icon,      "romfs:/error_icon.png");
+    imageLoad(&appTextures.background,      "romfs:/ams_background.png");
+    imageLoad(&appTextures.app_icon,        "romfs:/app_icon.png");
+    imageLoad(&appTextures.ams_icon,        "romfs:/ams_icon.png");
+    imageLoad(&appTextures.hekate_icon,     "romfs:/hekate_icon.png");
+    imageLoad(&appTextures.patch_icon,      "romfs:/patch_icon.png");
+    imageLoad(&appTextures.reboot_icon,     "romfs:/reboot_icon.png");
+    imageLoad(&appTextures.error_icon,      "romfs:/error_icon.png");
 }
 
 void destroyTextures()
 {
-    TTF_CloseFont(fntSmall);
-    TTF_CloseFont(fntMedium);
-    TTF_CloseFont(fntLarge);
-    TTF_CloseFont(fntButton);
-    TTF_CloseFont(fntButtonBig);
+    TTF_CloseFont(appFonts.fntSmall);
+    TTF_CloseFont(appFonts.fntMedium);
+    TTF_CloseFont(appFonts.fntLarge);
+    TTF_CloseFont(appFonts.fntButton);
+    TTF_CloseFont(appFonts.fntButtonBig);
 
-    SDL_DestroyTexture(background);
-    SDL_DestroyTexture(app_icon);
-    SDL_DestroyTexture(ams_icon);
-    SDL_DestroyTexture(hekate_icon);
-    SDL_DestroyTexture(patch_icon);
-    SDL_DestroyTexture(reboot_icon);
-    SDL_DestroyTexture(error_icon);
+    SDL_DestroyTexture(appTextures.background);
+    SDL_DestroyTexture(appTextures.app_icon);
+    SDL_DestroyTexture(appTextures.ams_icon);
+    SDL_DestroyTexture(appTextures.hekate_icon);
+    SDL_DestroyTexture(appTextures.patch_icon);
+    SDL_DestroyTexture(appTextures.reboot_icon);
+    SDL_DestroyTexture(appTextures.error_icon);
 }
 
 void sdlInit()
@@ -163,7 +163,6 @@ void sdlInit()
 
     // highest quality
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-
     loadFonts();
     loadTextures();
 }
