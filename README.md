@@ -2,7 +2,7 @@
 
 Update Atmosphere CFW and sigpatches from within your switch!
 
-![Img](images/example.jpg)
+![Img](img/example.jpg)
 
 ----
 
@@ -61,7 +61,7 @@ If you have any problems building, feel free to open an issue including any buil
 
 ## Special Thanks!
 
-[iTotalJustice](ITotalJustice) for originally developing the app.
+[iTotalJustice](ITotalJustice) for originally developing the app!
 
 [toph](https://github.com/sudot0ph) for the design of the app icon, as well as the most icons used within the app!
 

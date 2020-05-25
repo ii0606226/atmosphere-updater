@@ -43,9 +43,9 @@ APP_VERSION := 0.6.1
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	src
 DATA		:=	data
-INCLUDES	:=	includes
+INCLUDES	:=	include
 ROMFS		:=	romfs
 
 #---------------------------------------------------------------------------------
