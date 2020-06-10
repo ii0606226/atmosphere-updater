@@ -1,227 +1,118 @@
-#---------------------------------------------------------------------------------
-.SUFFIXES:
-#---------------------------------------------------------------------------------
+#=====================================================================================================
+# atmosphere-updater - App that allows you to update Atmosphere (& sigpatches) directly on your switch
+# Copyright (C) 2020 eXhumer
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#=====================================================================================================
 
-ifeq ($(strip $(DEVKITPRO)),)
+#=======================================================#
+# Check on whether user is competent enough to continue #
+#=======================================================#
+ifndef DEVKITPRO
 $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
-endif
-
-TOPDIR ?= $(CURDIR)
+else
 include $(DEVKITPRO)/libnx/switch_rules
-
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# BUILD is the directory where object files & intermediate files will be placed
-# SOURCES is a list of directories containing source code
-# DATA is a list of directories containing data files
-# INCLUDES is a list of directories containing header files
-# ROMFS is the directory containing data to be added to RomFS, relative to the Makefile (Optional)
-#
-# NO_ICON: if set to anything, do not use icon.
-# NO_NACP: if set to anything, no .nacp file is generated.
-# APP_TITLE is the name of the app stored in the .nacp file (Optional)
-# APP_AUTHOR is the author of the app stored in the .nacp file (Optional)
-# APP_VERSION is the version of the app stored in the .nacp file (Optional)
-# APP_TITLEID is the titleID of the app stored in the .nacp file (Optional)
-# ICON is the filename of the icon (.jpg), relative to the project folder.
-#   If not set, it attempts to use one of the following (in this order):
-#     - <Project name>.jpg
-#     - icon.jpg
-#     - <libnx folder>/default_icon.jpg
-#
-# CONFIG_JSON is the filename of the NPDM config file (.json), relative to the project folder.
-#   If not set, it attempts to use one of the following (in this order):
-#     - <Project name>.json
-#     - config.json
-#   If a JSON file is provided or autodetected, an ExeFS PFS0 (.nsp) is built instead
-#   of a homebrew executable (.nro). This is intended to be used for sysmodules.
-#   NACP building is skipped as well.
-#---------------------------------------------------------------------------------
-APP_TITLE   := Atmosphere-Updater
-APP_AUTHOR  := eXhumer
-APP_VERSION := 0.6.1
-
-TARGET		:=	$(notdir $(CURDIR))
-BUILD		:=	build
-SOURCES		:=	src
-DATA		:=	data
-INCLUDES	:=	include
-ROMFS		:=	romfs
-
-#---------------------------------------------------------------------------------
-# options for code generation
-#---------------------------------------------------------------------------------
-ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
-
-CFLAGS	:=	-g -Wall -O3 -ffunction-sections \
-			$(ARCH) $(DEFINES)
-
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__ `freetype-config --cflags` `sdl2-config --cflags`
-
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
-
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
-
-LIBS	:=  -lSDL2_ttf -lSDL2_image -lwebp -lpng -lturbojpeg -lSDL2 -lSDL2_gfx `sdl2-config --libs` `freetype-config --libs` \
-			-lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lminizip -lz -lnx
-
-#---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
-#---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX)
-
-
-#---------------------------------------------------------------------------------
-# no real need to edit anything past this point unless you need to add additional
-# rules for different file extensions
-#---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
-
-export OUTPUT	:=	$(CURDIR)/$(TARGET)
-export TOPDIR	:=	$(CURDIR)
-
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
-
-export DEPSDIR	:=	$(CURDIR)/$(BUILD)
-
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
-
-#---------------------------------------------------------------------------------
-# use CXX for linking C++ projects, CC for standard C
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(CPPFILES)),)
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CXX)
-#---------------------------------------------------------------------------------
-else
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CXX)
-#---------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------
-
-export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
-export OFILES_SRC	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
-export OFILES 	:=	$(OFILES_BIN) $(OFILES_SRC)
-export HFILES_BIN	:=	$(addsuffix .h,$(subst .,_,$(BINFILES)))
-
-export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD)
-
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
-
-ifeq ($(strip $(CONFIG_JSON)),)
-	jsons := $(wildcard *.json)
-	ifneq (,$(findstring $(TARGET).json,$(jsons)))
-		export APP_JSON := $(TOPDIR)/$(TARGET).json
-	else
-		ifneq (,$(findstring config.json,$(jsons)))
-			export APP_JSON := $(TOPDIR)/config.json
-		endif
-	endif
-else
-	export APP_JSON := $(TOPDIR)/$(CONFIG_JSON)
 endif
 
-ifeq ($(strip $(ICON)),)
-	icons := $(wildcard *.jpg)
-	ifneq (,$(findstring $(TARGET).jpg,$(icons)))
-		export APP_ICON := $(TOPDIR)/$(TARGET).jpg
-	else
-		ifneq (,$(findstring icon.jpg,$(icons)))
-			export APP_ICON := $(TOPDIR)/icon.jpg
-		endif
-	endif
-else
-	export APP_ICON := $(TOPDIR)/$(ICON)
-endif
+#======================================#
+# Target Application Build Information #
+#======================================#
+APP_TITLE		:=	Atmosphere Updater
+APP_AUTHOR		:=	$(shell whoami)
+VERSION_MAJOR	:=	0
+VERSION_MINOR	:=	7
+VERSION_PATCH	:=	0
+APP_VERSION		:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 
-ifeq ($(strip $(NO_ICON)),)
-	export NROFLAGS += --icon=$(APP_ICON)
-endif
+#===================================================#
+# Variables holding various paths used during build #
+#===================================================#
+TARGET					:=	atmosphere-updater
+BUILD					:=	build
+PROGRAM_EXEFS_SOURCE	:=	source
+FORWARDER				:=	forwarder
+FORWARDER_EXEFS_SOURCE	:=	$(FORWARDER)/source
+INCLUDE					:=	include
+OBJS					:=	objs
+DEPS					:=	deps
+ROMFS					:=	romfs
 
-ifeq ($(strip $(NO_NACP)),)
-	export NROFLAGS += --nacp=$(CURDIR)/$(TARGET).nacp
-endif
+#=======================================#
+# Path to all libraries used in project #
+#=======================================#
+LIBDIRS	:=	$(PORTLIBS)\
+			$(LIBNX)
 
-ifneq ($(APP_TITLEID),)
-	export NACPFLAGS += --titleid=$(APP_TITLEID)
-endif
+#=====================================================================#
+# Code Generation Options                                             #
+# **NOTE**: DO NOT CHANGE ANYTHING UNLESS YOU KNOW WHAT YOU ARE DOING #
+#=====================================================================#
+ARCHFLAGS	:=	-march=armv8-a+crc+crypto\
+				-mtune=cortex-a57\
+				-mtp=soft\
+				-fPIE
 
-ifneq ($(ROMFS),)
-	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
-endif
+DEFFLAGS	:=	-D__SWITCH__\
+				-DVERSION_MAJOR=VERSION_MAJOR\
+				-DVERSION_MINOR=VERSION_MINOR\
+				-DVERSION_PATCH=VERSION_PATCH\
+				-DAPP_VERSION=\"$(APP_VERSION)\"
 
-.PHONY: $(BUILD) clean all
+INCFLAG	:=	-I$(INCLUDE)\
+			$(foreach dir,$(LIBDIRS),-I$(dir)/include)
 
-#---------------------------------------------------------------------------------
-all: $(BUILD)
+CFLAGS	:=	$(shell freetype-config --cflags)\
+			$(shell sdl2-config --cflags)\
+			$(ARCHFLAGS)\
+			$(DEFFLAGS)\
+			$(INCFLAG)\
+			-Wall
 
-$(BUILD):
-	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+CXXFLAGS	:=	-fno-rtti\
+				-fno-exceptions\
+				-std=gnu++2a
 
-#---------------------------------------------------------------------------------
-clean:
-	@echo clean ...
-ifeq ($(strip $(APP_JSON)),)
-	@rm -fr $(BUILD) $(TARGET).nro $(TARGET).nacp $(TARGET).elf
-else
-	@rm -fr $(BUILD) $(TARGET).nsp $(TARGET).nso $(TARGET).npdm $(TARGET).elf
-endif
+ASFLAGS	:=	$(ARCHFLAGS)
 
+LDFLAGS	:=	$(ARCHFLAGS)\
+			-specs=$(DEVKITPRO)/libnx/switch.specs
 
-#---------------------------------------------------------------------------------
-else
-.PHONY:	all
+LIBS	:=	$(shell sdl2-config --libs)\
+			$(shell freetype-config --libs)\
+			-lSDL2_gfx\
+			-lSDL2_image\
+			-lSDL2_ttf\
+			-lpng\
+			-lturbojpeg\
+			-lwebp\
+			-lcurl\
+			-lmbedtls
+			-lmbedx509\
+			-lmbedcrypto\
+			-lminizip\
+			-lz\
+			-lnx
 
-DEPENDS	:=	$(OFILES:.o=.d)
-
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(APP_JSON)),)
-
-all	:	$(OUTPUT).nro
-
-ifeq ($(strip $(NO_NACP)),)
-$(OUTPUT).nro	:	$(OUTPUT).elf $(OUTPUT).nacp
-else
-$(OUTPUT).nro	:	$(OUTPUT).elf
-endif
-
-else
-
-all	:	$(OUTPUT).nsp
-
-$(OUTPUT).nsp	:	$(OUTPUT).nso $(OUTPUT).npdm
-
-$(OUTPUT).nso	:	$(OUTPUT).elf
-
-endif
-
-$(OUTPUT).elf	:	$(OFILES)
-
-$(OFILES_SRC)	: $(HFILES_BIN)
-
-#---------------------------------------------------------------------------------
-# you need a rule like this for each extension you use as binary data
-#---------------------------------------------------------------------------------
-%.bin.o	%_bin.h :	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
--include $(DEPENDS)
-
-#---------------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------------
+#============================================================#
+# Target specific defines to optimize target for its usecase #
+#============================================================#
+release	:	RELTYPE		:=	release
+release	:	CFLAGS		+=	-ffunction-sections -fdata-sections
+release	:	CFLAGS		+=	-O3
+debug	:	RELTYPE		:=	debug
+debug	:	DEFFLAGS	+=	-DDEBUG
+debug	:	CFLAGS		+=	-O0
+debug	:	ASFLAGS		+=	-g
+debug	:	LDFLAGS		+=	-Wl,-Map,$(BUILD)/$(OUTPUT)-$(RELTYPE).map
+debug	:	CFLAGS		+=	-g
