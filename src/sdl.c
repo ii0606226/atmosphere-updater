@@ -1,3 +1,21 @@
+/*
+ * atmosphere-updater - App that allows you to update Atmosphere (& sigpatches) directly on your switch
+ * Copyright (C) 2020 eXhumer
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 /* I wrote this header to be as portable as possible for other homebrew switch projects */
 /* The only thing that needs to be changed will be the name / number of textures you want to load */
 /* If you decide to use this header and add functions, please consider opening a pr for said functions */
