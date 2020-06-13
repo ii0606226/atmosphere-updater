@@ -40,7 +40,7 @@ static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, v
   size_t realsize = size * nmemb;
   struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
 
-  char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+  char *ptr = (char *)realloc(mem->memory, mem->size + realsize + 1);
 
   if (ptr == NULL)
   {
@@ -89,7 +89,7 @@ int downloadFile(const char *url, const char *output, int api_mode)
         if (fp)
         {
             struct MemoryStruct chunk;
-            chunk.memory = malloc(1);
+            chunk.memory = (char *)malloc(1);
             chunk.size = 0;
 
             curl_easy_setopt(curl, CURLOPT_URL, url);
