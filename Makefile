@@ -1,7 +1,3 @@
-#---------------------------------------------------------------------------------
-.SUFFIXES:
-#---------------------------------------------------------------------------------
-
 ifndef DEVKITPRO
 $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
 else
@@ -28,7 +24,6 @@ ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
 DEFINES	:=	-D__SWITCH__
 
-# -g
 CFLAGS	:=	-Wall\
 			-O3\
 			-ffunction-sections \
@@ -40,10 +35,8 @@ CFLAGS	:=	-Wall\
 CXXFLAGS	:=	-fno-rtti\
 				-fno-exceptions
 
- # -g
 ASFLAGS	:=	$(ARCH)
 
-# -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs
 
 LIBS	:=	-lSDL2_ttf\
@@ -83,14 +76,22 @@ APP_ICON	:=	icon.jpg
 
 OUTPUT	:=	$(BUILD)/$(TARGET)
 
-NROFLAGS	+=	--nacp=$(OUTPUT).nacp --romfsdir=$(ROMFS)
+NACP_OUTPUT	:=	$(OUTPUT).nacp
+
+NRO_OUTPUT	:=	$(OUTPUT).nro
+
+NSO_OUTPUT	:=	$(OUTPUT).nso
+
+ELF_OUTPUT	:=	$(OUTPUT).elf
+
+NROFLAGS	+=	--nacp=$(NACP_OUTPUT) --romfsdir=$(ROMFS)
 
 .PHONY: $(BUILD) $(OBJSDIR) $(DEPSDIR) release nso clean
 
-release:	$(OUTPUT).nro
-nso:	$(OUTPUT).nso
-$(OUTPUT).nro:	$(BUILD) $(OUTPUT).elf $(OUTPUT).nacp
-$(OUTPUT).elf:	$(OBJSDIR) $(DEPSDIR) $(OFILES)
+release:	$(NRO_OUTPUT)
+nso:	$(NSO_OUTPUT)
+$(NRO_OUTPUT):	$(BUILD) $(ELF_OUTPUT) $(NACP_OUTPUT)
+$(ELF_OUTPUT):	$(OBJSDIR) $(DEPSDIR) $(OFILES)
 
 $(BUILD) $(OBJSDIR) $(DEPSDIR):
 	[ -d $@ ] || mkdir -p $@
@@ -101,10 +102,13 @@ $(OBJSDIR)/%.o:	$(SOURCE)/%.cpp
 $(OBJSDIR)/%.o:	$(SOURCE)/%.c
 	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) $(INCFLAGS) -c $< -o $@ $(ERROR_FILTER)
 
-$(OUTPUT).nso: $(OUTPUT).elf
+$(NSO_OUTPUT): $(ELF_OUTPUT)
 	elf2nso $< $@
 
+$(ELF_OUTPUT):
+	@$(LD) $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
+
 clean:
-	rm -f $(TARGET).nro $$(TARGET).nacp $(BUILD)/$(TARGET).elf
+	rm -f $(NRO_OUTPUT) $(NACP_OUTPUT) $(ELF_OUTPUT) $(NSO_OUTPUT)
 
 -include $(DEPENDS)
