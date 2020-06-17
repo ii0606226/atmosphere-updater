@@ -84,7 +84,7 @@ NSO_OUTPUT	:=	$(OUTPUT).nso
 
 ELF_OUTPUT	:=	$(OUTPUT).elf
 
-NROFLAGS	+=	--nacp=$(NACP_OUTPUT) --romfsdir=$(ROMFS)
+NROFLAGS	+=	--nacp=$(NACP_OUTPUT) --romfsdir=$(ROMFS) --icon=$(APP_ICON)
 
 .PHONY: $(BUILD) $(OBJSDIR) $(DEPSDIR) release nso clean
 
