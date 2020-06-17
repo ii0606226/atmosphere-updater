@@ -28,10 +28,11 @@
 #include "download.h"
 #include "reboot_payload.h"
 
-//#define DEBUG                                              // enable for nxlink debug
-
 AppTextures appTextures;
 AppFonts appFonts;
+#ifdef __DEBUG__
+int sockFD = 0;
+#endif
 
 int appInit()
 {
@@ -40,10 +41,11 @@ int appInit()
     if (R_FAILED(rc = socketInitializeDefault()))           // for curl / nxlink.
         printf("socketInitializeDefault() failed: 0x%x.\n\n", rc);
 
-    #ifdef DEBUG
-    if (R_FAILED(rc = nxlinkStdio()))                       // redirect all printout to console window.
-        printf("nxlinkStdio() failed: 0x%x.\n\n", rc);
-    #endif
+#ifdef __DEBUG__
+	sockFD = nxlinkStdio();
+	if(sockFD < 0)
+		printf("nxlinkStdio() failed: 0x%x.\n\n", sockFD);
+#endif
 
     if (R_FAILED(rc = setsysInitialize()))                  // for system version
         printf("setsysInitialize() failed: 0x%x.\n\n", rc);
@@ -71,6 +73,10 @@ void appExit()
     plExit();
     splExit();
     setsysExit();
+#ifdef __DEBUG__
+	if(sockFD > 0)
+		close(sockFD);
+#endif
 }
 
 int main(int argc, char **argv)

@@ -65,6 +65,11 @@ void writeSysVersion()
     char sysVersionBuffer[20];
 	snprintf(sysVersionBuffer, 20, "%u.%u.%u", ver.major, ver.minor, ver.micro);
     snprintf(g_sysVersion, sizeof(g_sysVersion), "Firmware Ver: %s", sysVersionBuffer);
+
+#ifdef __DEBUG__
+	printf("sysVersionBuffer: %s\n", sysVersionBuffer);
+	printf("g_sysVersion: %s\n", g_sysVersion);
+#endif
 }
 
 void writeAmsVersion()
@@ -93,11 +98,19 @@ void writeAmsVersion()
 
     // write ams version number + hash.
     char amsVersionNum[25];
-    snprintf(g_amsVersionWithoutHash, sizeof(g_amsVersionWithoutHash), "%lu.%lu.%lu", (ver >> 32) & 0xFF,  (ver >> 24) & 0xFF, (ver >> 16) & 0xFF);
+    snprintf(g_amsVersionWithoutHash, sizeof(g_amsVersionWithoutHash), "%lu.%lu.%lu", (ver >> 56) & 0xFF,  (ver >> 48) & 0xFF, (ver >> 40) & 0xFF);
 	snprintf(amsVersionNum, sizeof(amsVersionNum), "%s (%s)", g_amsVersionWithoutHash, shortHash);
-
     // write string + ams version to global variable.
     snprintf(g_amsVersion, sizeof(g_amsVersion), "Atmosphere Ver: %s", amsVersionNum);
+
+#ifdef __DEBUG__
+	printf("ver: %ld\n", ver);
+	printf("fullHash: %ld\n", fullHash);
+	printf("shortHash: %s\n", shortHash);
+	printf("g_amsVersionWithoutHash: %s\n", g_amsVersionWithoutHash);
+	printf("amsVersionNum: %s\n", amsVersionNum);
+	printf("g_amsVersion: %s\n", g_amsVersion);
+#endif
 }
 
 void writeLatestAtmosphereVersion()
