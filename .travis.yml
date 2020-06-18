@@ -1,0 +1,29 @@
+language: cpp
+os: linux
+dist: bionic
+compiler: gcc
+
+jobs:
+  include:
+    - stage: "Application Build Test"
+
+      before_install:
+      - wget https://github.com/eXhumer/switch-ex-curl/releases/download/v7.70.0/switch-ex-curl-7.70.0-1-any.pkg.tar.xz
+      - wget https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb
+
+      install:
+      - sudo dpkg --install devkitpro-pacman.deb
+      - sudo dkp-pacman --sync --refresh --sysupgrade --noconfirm
+      - sudo dkp-pacman --sync --noconfirm devkitA64 devkit-env libnx switch-sdl2 switch-sdl2_gfx switch-sdl2_image switch-sdl2_ttf switch-freetype switch-zlib
+      - sudo dkp-pacman --upgrade --noconfirm switch-ex-curl-7.70.0-1-any.pkg.tar.xz
+
+      before_script:
+      - source /etc/profile.d/devkit-env.sh
+      - export PATH=${DEVKITPRO}/portlibs/switch/bin:${PATH}
+
+      script:
+      - make
+
+branches:
+  only:
+  - master
