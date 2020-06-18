@@ -54,6 +54,7 @@ Install the devkitpro tool chain from [here](https://devkitpro.org/wiki/Getting_
 * switch-sdl2_image
 * switch-sdl2_ttf
 * switch-zlib
+* switch-bzip2
 
 If you have any problems building, feel free to open an issue including any build errors.
  

@@ -37,7 +37,7 @@ jobs:
       run: sudo dkp-pacman --upgrade --noconfirm switch-ex-curl-7.70.0-1-any.pkg.tar.xz
 
     - name: Install packages required for build from dkp-pacman
-      run: sudo dkp-pacman --sync --noconfirm devkitA64 devkit-env libnx switch-sdl2 switch-sdl2_gfx switch-sdl2_image switch-sdl2_ttf switch-freetype switch-zlib switch-tools
+      run: sudo dkp-pacman --sync --noconfirm devkitA64 devkit-env libnx switch-sdl2 switch-sdl2_gfx switch-sdl2_image switch-sdl2_ttf switch-freetype switch-zlib switch-tools switch-bzip2
 
     - name: Make application
       run: |
