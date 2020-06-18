@@ -26,8 +26,8 @@
 #include "unzip.h"
 #include "menu.h"
 
-#define WRITEBUFFERSIZE 500000 // 500KB
-#define MAXFILENAME     256
+#define WRITEBUFFERSIZE	500000 // 500KB
+#define MAXFILENAME		256
 
 int unzip(const char *output, int cursor)
 {
