@@ -23,14 +23,12 @@
 #include "touch.h"
 #include "util.h"
 
-#define APP_VERSION "Atmosphere Updater: 0.6.1"
-
 void refreshScreen(char loaded)
 {
     clearRenderer();
 
     // app version.
-    drawText(appFonts.fntMedium, 40, 40, SDL_GetColour(white), APP_VERSION);
+    drawText(appFonts.fntMedium, 40, 40, SDL_GetColour(white), "Atmosphere Updater: " APP_VERSION);
 
     // system version.
     drawText(appFonts.fntSmall, 25, 150, SDL_GetColour(white), getSysVersion());

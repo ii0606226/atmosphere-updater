@@ -22,7 +22,7 @@ LIBDIRS	:=	$(PORTLIBS) $(LIBNX)
 
 ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-DEFINES	:=	-D__SWITCH__
+DEFINES	:=	-D__SWITCH__ -DAPP_VERSION=\"$(APP_VERSION)\"
 
 CFLAGS	:=	-Wall\
 			-O3\
