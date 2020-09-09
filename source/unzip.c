@@ -60,6 +60,23 @@ int unzip(const char *output, int cursor)
 			fclose(f);
 		}
 
+		if (strstr(filename_inzip, "/reboot_payload.bin"))
+		{
+			FILE *f = fopen(filename_inzip, "r");
+			if (f)
+			{
+				if(yesNoBox(cursor, 380, 250, "Overwrite reboot_payload.bin?\n(YES recommended)") == NO)
+				{
+					if(yesNoBox(cursor, 380, 250, "Are you sure?") == YES)
+					{
+						fclose(f);
+						goto jump_to_end;
+					}
+				}
+			}
+			fclose(f);
+		}
+
 		if ((filename_inzip[strlen(filename_inzip) - 1]) == '/')
 		{
 			DIR *dir = opendir(filename_inzip);
