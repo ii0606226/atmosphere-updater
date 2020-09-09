@@ -65,9 +65,9 @@ int unzip(const char *output, int cursor)
 			FILE *f = fopen(filename_inzip, "r");
 			if (f)
 			{
-				if(yesNoBox(cursor, 380, 250, "Overwrite reboot_payload.bin?\n(YES recommended)") == NO)
+				if(yesNoBox(cursor, 360, 250, "Overwrite reboot_payload.bin?\n(YES recommended)") == NO)
 				{
-					if(yesNoBox(cursor, 380, 250, "Are you sure?") == YES)
+					if(yesNoBox(cursor, 390, 250, "Are you sure?") == YES)
 					{
 						fclose(f);
 						goto jump_to_end;
