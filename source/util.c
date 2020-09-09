@@ -129,7 +129,7 @@ void writeLatestAtmosphereVersion()
 			char c;
 			int i = 0;
 			while ((c = fgetc(fp)) != EOF)
-	{
+			{
 				if (c == '\n' || c == '\r')
 					break;
 				supportedVersionNumber[i] = c;
@@ -140,12 +140,12 @@ void writeLatestAtmosphereVersion()
 		}
 		snprintf(g_supportedAtmosphereVersion, sizeof(g_supportedAtmosphereVersion), supportedVersionNumber);
 		if (strcmp(g_amsVersionWithoutHash, supportedVersionNumber) != 0)
-			{
-				char buffer[50];
+		{
+			char buffer[50];
 			snprintf(buffer, sizeof(buffer), "- Latest supported: %s", supportedVersionNumber);
-				updateString = buffer;
-			}
+			updateString = buffer;
 		}
+	}
 	snprintf(g_latestAtmosphereVersion, sizeof(g_latestAtmosphereVersion), updateString);
 }
 
