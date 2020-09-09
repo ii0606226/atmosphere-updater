@@ -34,6 +34,7 @@ char g_sysVersion[50];
 char g_amsVersion[50];
 char g_amsVersionWithoutHash[15];
 char g_latestAtmosphereVersion[50];
+char g_supportedAtmosphereVersion[50];
 
 char *getSysVersion()
 {
@@ -48,6 +49,11 @@ char *getAmsVersion()
 char *getLatestAtmosphereVersion()
 {
 	return g_latestAtmosphereVersion;
+}
+
+char *getSupportedAtmosphereVersion()
+{
+	return g_supportedAtmosphereVersion;
 }
 
 void writeSysVersion()
@@ -112,18 +118,34 @@ void writeAmsVersion()
 void writeLatestAtmosphereVersion()
 {
 	char *updateString = "- Up to date";
-	if (!downloadFile(AMS_URL, TEMP_FILE, ON))
+	if (!downloadFile(AMS_SUPPORTED_URL, TEMP_FILE, ON))
 	{
-		char latestVersionNumber[10];
-		if (!parseSearch(TEMP_FILE, VERSION_FILTER_STRING, latestVersionNumber)) {
-			if (strcmp(g_amsVersionWithoutHash, latestVersionNumber) != 0)
+		char supportedVersionNumber[20];
+
+		FILE *fp = fopen(TEMP_FILE, "r");
+
+		if (fp)
+		{
+			char c;
+			int i = 0;
+			while ((c = fgetc(fp)) != EOF)
+	{
+				if (c == '\n' || c == '\r')
+					break;
+				supportedVersionNumber[i] = c;
+				i++;
+			}
+			supportedVersionNumber[i + 1] = '\0';
+			fclose(fp);
+		}
+		snprintf(g_supportedAtmosphereVersion, sizeof(g_supportedAtmosphereVersion), supportedVersionNumber);
+		if (strcmp(g_amsVersionWithoutHash, supportedVersionNumber) != 0)
 			{
 				char buffer[50];
-				snprintf(buffer, sizeof(buffer), "- Update available: %s", latestVersionNumber);
+			snprintf(buffer, sizeof(buffer), "- Latest supported: %s", supportedVersionNumber);
 				updateString = buffer;
 			}
 		}
-	}
 	snprintf(g_latestAtmosphereVersion, sizeof(g_latestAtmosphereVersion), updateString);
 }
 
@@ -184,9 +206,10 @@ int parseSearch(char *parse_string, char *filter, char* new_string)
 
 void update_ams()
 {
-	if (!downloadFile(AMS_URL, TEMP_FILE, ON))
+	char new_url[MAX_STRLEN];
+	snprintf(new_url, sizeof(new_url), AMS_URL_WITH_VERSION, g_supportedAtmosphereVersion);
+	if (!downloadFile(new_url, TEMP_FILE, ON))
 	{
-		char new_url[MAX_STRLEN];
 		if (!parseSearch(TEMP_FILE, FILTER_STRING, new_url))
 		{
 			if (!downloadFile(new_url, AMS_OUTPUT, OFF))
