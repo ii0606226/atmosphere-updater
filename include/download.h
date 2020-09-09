@@ -20,6 +20,7 @@
 #define _DOWNLOAD_H_
 
 #define AMS_URL		"https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases"
+#define AMS_URL_WITH_VERSION "https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases/tags/%s"
 #define HEKATE_URL	"https://api.github.com/repos/CTCaer/hekate/releases"
 #define PATCH_URL	"https://github.com/eXhumer/patches/releases/latest/download/sigpatches.zip"
 #define APP_URL		"https://github.com/eXhumer/atmosphere-updater/releases/latest/download/atmosphere-updater.nro"
